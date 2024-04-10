@@ -1,5 +1,5 @@
 # SpaceSalmon
-Github repository of our [Phaser.io](https://phaser.io) game Space Salmon
+Github repository of our [Phaser.io](https://phaser.io/tutorials/making-your-first-phaser-3-game) game Space Salmon
 
 ## Description
 Space Salmon is a endless platformer, where a salmon flops his way through space!
