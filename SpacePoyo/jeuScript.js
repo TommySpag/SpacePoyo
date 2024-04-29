@@ -10,6 +10,9 @@ var minY = 730;
 var maxY = 0;
 var playerOffsetX = (resolutionX / 2 - 24);
 var playerOffsetY = 730;
+var isJumping = false;
+var jumpHeight = 100; // Hauteur du saut
+var jumpSpeed = 5; // Vitesse de saut
 
 
 const appID = "TODO"
@@ -45,9 +48,99 @@ texturePromise.then((texturePromise) => {
         playerTankSprite.x = playerOffsetX;
         playerTankSprite.y = playerOffsetY;
         app.stage.addChild(playerTankSprite);
+
     })
 
 })
+
+document.addEventListener("keydown", (event) => {
+
+    if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
+        event.preventDefault();
+    }
+
+    
+    switch (event.key) {
+        case "ArrowLeft":
+            moveLeft();
+            break;
+        case "ArrowRight":
+            moveRight();
+            break;
+        case "ArrowUp": 
+            jump();
+            console.log('allo')
+            break;
+    }
+});
+
+
+
+function jump() {
+    
+    if (!isJumping && playerTankSprite.y === playerOffsetY) {
+        isJumping = true;
+        jumpAnimation();
+    }
+}
+
+function jumpAnimation() {
+    var jumpInterval;
+    var initialY = playerTankSprite.y;
+    var maxHeight = initialY - jumpHeight;
+
+    jumpInterval = setInterval(function() {
+        
+        if (playerTankSprite.y <= maxHeight) {
+            clearInterval(jumpInterval);
+            fallAnimation();
+            return;
+        }
+
+        playerTankSprite.y -= jumpSpeed;
+
+        if (moveLeftKeyPressed) {
+            moveLeft();
+        } else if (moveRightKeyPressed) {
+            moveRight();
+        }
+    }, 20);
+}
+function fallAnimation() {
+    var iterations = jumpHeight / jumpSpeed;
+
+
+    var fallInterval = setInterval(function() {
+      
+        playerTankSprite.y += jumpSpeed;
+        iterations--;
+
+        
+        if (iterations <= 0 && playerTankSprite.y >= playerOffsetY) {
+            clearInterval(fallInterval);
+            playerTankSprite.y = playerOffsetY;
+            isJumping = false; 
+        }
+    }, 20);
+}
+
+
+function moveLeft() {
+    
+    if (playerTankSprite.x - deltaOffset >= minX) {
+        playerTankSprite.x -= deltaOffset;
+        sendCommand(); 
+    }
+}
+
+
+function moveRight() {
+    
+    if (playerTankSprite.x + deltaOffset <= maxX) {
+        playerTankSprite.x += deltaOffset;
+        sendCommand(); 
+    }
+}
 
 
 document.getElementById("connectBtn").addEventListener("click", () => {
@@ -87,9 +180,6 @@ function onWrongLeave() {
     console.error("Chromecast disconnection error", error);
 }
 
-function jump() {
-
-}
 
 function left() {
 
