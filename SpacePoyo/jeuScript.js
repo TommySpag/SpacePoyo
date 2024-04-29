@@ -11,9 +11,8 @@ var maxY = 0;
 var playerOffsetX = (resolutionX / 2 - 24);
 var playerOffsetY = 730;
 var isJumping = false;
-var jumpHeight = 100; // Hauteur du saut
-var jumpSpeed = 5; // Vitesse de saut
-
+var jumpHeight = 200; 
+var jumpSpeed = 5; 
 
 const appID = "TODO"
 var currentSession;
@@ -61,7 +60,7 @@ document.addEventListener("keydown", (event) => {
 
     
     switch (event.key) {
-        case "ArrowLeft":
+        case "ArrowLeft" :
             moveLeft();
             break;
         case "ArrowRight":
@@ -128,7 +127,7 @@ function fallAnimation() {
 function moveLeft() {
     
     if (playerTankSprite.x - deltaOffset >= minX) {
-        playerTankSprite.x -= deltaOffset;
+        playerTankSprite.x -= deltaOffset + 5;
         sendCommand(); 
     }
 }
@@ -137,10 +136,12 @@ function moveLeft() {
 function moveRight() {
     
     if (playerTankSprite.x + deltaOffset <= maxX) {
-        playerTankSprite.x += deltaOffset;
+        playerTankSprite.x += deltaOffset + 5;
         sendCommand(); 
     }
 }
+
+
 
 
 document.getElementById("connectBtn").addEventListener("click", () => {
