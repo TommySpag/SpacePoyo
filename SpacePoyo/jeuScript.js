@@ -16,7 +16,6 @@ var jumpSpeed = 5; // Vitesse de saut
 var platforms = [];
 
 
-
 const appID = "TODO"
 var currentSession;
 var deltaPosition;
@@ -30,8 +29,6 @@ document.getElementById("pixie-container").appendChild(app.view);
 const texturePromise = PIXI.Assets.load("imgs/tile.png");
 
 texturePromise.then((texturePromise) => {
-
-    
 
     var groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.TextureCache['imgs/tile.png']);
     app.stage.addChild(groundTiles);
@@ -77,7 +74,6 @@ texturePromise.then((texturePromise) => {
             event.preventDefault();
         }
     
-        
         switch (event.key) {
             case "ArrowLeft":
                 moveLeft();
@@ -95,13 +91,25 @@ texturePromise.then((texturePromise) => {
     
     
     function jump() {
-        
-        if (!isJumping && playerTankSprite.y === playerOffsetY) {
+        if (!isJumping && !isCollidingWithPlatform(playerTankSprite.x, playerTankSprite.y + 1)) {
             isJumping = true;
             jumpAnimation();
         }
     }
     
+    function isCollidingWithPlatform(x, y) {
+        for (let platform of platforms) {
+            if (
+                x + playerTankSprite.width >= platform.x &&
+                x <= platform.x + platform.width &&
+                y + playerTankSprite.height >= platform.y &&
+                y <= platform.y + platform.height
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
     function jumpAnimation() {
         var jumpInterval;
         var initialY = playerTankSprite.y;
@@ -161,6 +169,7 @@ texturePromise.then((texturePromise) => {
     }
 
 })
+
 
 
 document.getElementById("connectBtn").addEventListener("click", () => {
