@@ -8,11 +8,11 @@ var minX = 5;
 var maxX = 945;
 var minY = 730;
 var maxY = 0;
-var playerOffsetX = (resolutionX / 2 - 24);
+var playerOffsetX = 25;
 var playerOffsetY = 730;
 var isJumping = false;
-var jumpHeight = 200; // Hauteur du saut
-var jumpSpeed = 5; // Vitesse de saut
+var jumpHeight = 200; 
+var jumpSpeed = 5; 
 var platforms = [];
 
 
@@ -65,9 +65,6 @@ texturePromise.then((texturePromise) => {
         platforms.push(platform)
     }
     
-
-  
-    
     document.addEventListener("keydown", (event) => {
 
         if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
@@ -88,35 +85,22 @@ texturePromise.then((texturePromise) => {
         }
     });
     
-    
-    
+
     function jump() {
-        if (!isJumping && !isCollidingWithPlatform(playerTankSprite.x, playerTankSprite.y + 1)) {
+        if (!isJumping) {
             isJumping = true;
             jumpAnimation();
         }
     }
     
-    function isCollidingWithPlatform(x, y) {
-        for (let platform of platforms) {
-            if (
-                x + playerTankSprite.width >= platform.x &&
-                x <= platform.x + platform.width &&
-                y + playerTankSprite.height >= platform.y &&
-                y <= platform.y + platform.height
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
+
     function jumpAnimation() {
         var jumpInterval;
         var initialY = playerTankSprite.y;
         var maxHeight = initialY - jumpHeight;
     
         jumpInterval = setInterval(function() {
-            
+    
             if (playerTankSprite.y <= maxHeight) {
                 clearInterval(jumpInterval);
                 fallAnimation();
@@ -167,6 +151,7 @@ texturePromise.then((texturePromise) => {
             sendCommand(); 
         }
     }
+   
 
 })
 
@@ -207,15 +192,6 @@ function onCorrectLeave() {
 
 function onWrongLeave() {
     console.error("Chromecast disconnection error", error);
-}
-
-
-function left() {
-
-}
-
-function right() {
-
 }
 
 function sendCommand() {
