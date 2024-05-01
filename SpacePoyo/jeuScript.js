@@ -11,8 +11,10 @@ var maxY = 0;
 var playerOffsetX = (resolutionX / 2 - 24);
 var playerOffsetY = 730;
 var isJumping = false;
-var jumpHeight = 100; // Hauteur du saut
+var jumpHeight = 200; // Hauteur du saut
 var jumpSpeed = 5; // Vitesse de saut
+var platforms = [];
+
 
 
 const appID = "TODO"
@@ -28,7 +30,10 @@ document.getElementById("pixie-container").appendChild(app.view);
 const texturePromise = PIXI.Assets.load("imgs/tile.png");
 
 texturePromise.then((texturePromise) => {
-    var groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.TextureCache['imgs/imgGround.png']);
+
+    
+
+    var groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.TextureCache['imgs/tile.png']);
     app.stage.addChild(groundTiles);
 
 
@@ -49,98 +54,113 @@ texturePromise.then((texturePromise) => {
         playerTankSprite.y = playerOffsetY;
         app.stage.addChild(playerTankSprite);
 
+        createPlatform(100, 700, 200, 20, 0xFF0000); // Rouge
+        createPlatform(400, 600, 150, 20, 0x00FF00); // Vert
+        createPlatform(700, 500, 250, 20, 0x0000FF); // Bleu
     })
 
+    function createPlatform(x, y, width, height, color) {
+        var platform = new PIXI.Graphics();
+        platform.beginFill(color);
+        platform.drawRect(x, y, width, height);
+        platform.endFill();
+        app.stage.addChild(platform);
+        platforms.push(platform)
+    }
+    
+
+  
+    
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
+            event.preventDefault();
+        }
+    
+        
+        switch (event.key) {
+            case "ArrowLeft":
+                moveLeft();
+                break;
+            case "ArrowRight":
+                moveRight();
+                break;
+            case "ArrowUp": 
+                jump();
+
+                break;
+        }
+    });
+    
+    
+    
+    function jump() {
+        
+        if (!isJumping && playerTankSprite.y === playerOffsetY) {
+            isJumping = true;
+            jumpAnimation();
+        }
+    }
+    
+    function jumpAnimation() {
+        var jumpInterval;
+        var initialY = playerTankSprite.y;
+        var maxHeight = initialY - jumpHeight;
+    
+        jumpInterval = setInterval(function() {
+            
+            if (playerTankSprite.y <= maxHeight) {
+                clearInterval(jumpInterval);
+                fallAnimation();
+                return;
+            }
+    
+            playerTankSprite.y -= jumpSpeed;
+    
+            if (moveLeftKeyPressed) {
+                moveLeft();
+            } else if (moveRightKeyPressed) {
+                moveRight();
+            }
+        }, 20);
+    }
+    function fallAnimation() {
+        var iterations = jumpHeight / jumpSpeed;
+    
+    
+        var fallInterval = setInterval(function() {
+          
+            playerTankSprite.y += jumpSpeed;
+            iterations--;
+    
+            
+            if (iterations <= 0 && playerTankSprite.y >= playerOffsetY) {
+                clearInterval(fallInterval);
+                playerTankSprite.y = playerOffsetY;
+                isJumping = false; 
+            }
+        }, 20);
+    }
+    
+    
+    function moveLeft() {
+        
+        if (playerTankSprite.x - deltaOffset >= minX) {
+            playerTankSprite.x -= deltaOffset + 5;
+            sendCommand(); 
+        }
+    }
+    
+    
+    function moveRight() {
+        
+        if (playerTankSprite.x + deltaOffset <= maxX) {
+            playerTankSprite.x += deltaOffset + 5;
+            sendCommand(); 
+        }
+    }
+
 })
-
-document.addEventListener("keydown", (event) => {
-
-    if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
-        event.preventDefault();
-    }
-
-    
-    switch (event.key) {
-        case "ArrowLeft":
-            moveLeft();
-            break;
-        case "ArrowRight":
-            moveRight();
-            break;
-        case "ArrowUp": 
-            jump();
-            console.log('allo')
-            break;
-    }
-});
-
-
-
-function jump() {
-    
-    if (!isJumping && playerTankSprite.y === playerOffsetY) {
-        isJumping = true;
-        jumpAnimation();
-    }
-}
-
-function jumpAnimation() {
-    var jumpInterval;
-    var initialY = playerTankSprite.y;
-    var maxHeight = initialY - jumpHeight;
-
-    jumpInterval = setInterval(function() {
-        
-        if (playerTankSprite.y <= maxHeight) {
-            clearInterval(jumpInterval);
-            fallAnimation();
-            return;
-        }
-
-        playerTankSprite.y -= jumpSpeed;
-
-        if (moveLeftKeyPressed) {
-            moveLeft();
-        } else if (moveRightKeyPressed) {
-            moveRight();
-        }
-    }, 20);
-}
-function fallAnimation() {
-    var iterations = jumpHeight / jumpSpeed;
-
-
-    var fallInterval = setInterval(function() {
-      
-        playerTankSprite.y += jumpSpeed;
-        iterations--;
-
-        
-        if (iterations <= 0 && playerTankSprite.y >= playerOffsetY) {
-            clearInterval(fallInterval);
-            playerTankSprite.y = playerOffsetY;
-            isJumping = false; 
-        }
-    }, 20);
-}
-
-
-function moveLeft() {
-    
-    if (playerTankSprite.x - deltaOffset >= minX) {
-        playerTankSprite.x -= deltaOffset;
-        sendCommand(); 
-    }
-}
-
-
-function moveRight() {
-    
-    if (playerTankSprite.x + deltaOffset <= maxX) {
-        playerTankSprite.x += deltaOffset;
-        sendCommand(); 
-    }
-}
 
 
 document.getElementById("connectBtn").addEventListener("click", () => {
