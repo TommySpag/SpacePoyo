@@ -63,9 +63,9 @@ document.addEventListener("keydown", (event) => {
 function createPlatform(x, y, width, height, color) {
     const platform = new PIXI.Graphics();
     platform.beginFill(color);
-    platform.drawRect(0, 0, width, height); 
+    platform.drawRect(0, 0, width, height); // Définition du rectangle à (0, 0) car les coordonnées seront définies lors de l'ajout à la scène
     platform.endFill();
-    platform.position.set(x, y); 
+    platform.position.set(x, y); // Définition des coordonnées x et y
     app.stage.addChild(platform);
     platforms.push(platform);
     console.log("Plateforme créée : x = " + x + ", y = " + y + ", largeur = " + width + ", hauteur = " + height);
@@ -85,9 +85,10 @@ function jumpAnimation() {
             clearInterval(jumpInterval);
             fallAnimation();
         } else {
-            if (isOnPlatform()) { 
-                playerTankSprite.y -= jumpSpeed + 200; 
-                playerTankSprite.y -= jumpSpeed; 
+            if (isOnPlatform()) { // Si le personnage est sur une plateforme
+                playerTankSprite.y -= jumpSpeed + 200; // Sauter plus haut si le personnage est sur une plateforme
+            } else {
+                playerTankSprite.y -= jumpSpeed; // Sauter à la hauteur normale
             }
         }
     }, 20);
@@ -150,9 +151,6 @@ function moveRight() {
         playerTankSprite.x += deltaOffset + 5;
     }
 }
-
-
-
 
 
 
