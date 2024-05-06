@@ -1,159 +1,158 @@
 const resolutionX = 1000;
 const resolutionY = 800;
-var tileSizeX = 128;
-var tileSizeY = 128;
-var groundTiles;
-var playerTankSprite;
-var minX = 5;
-var maxX = 945;
-var minY = 730;
-var maxY = 0;
-var playerOffsetX = 25;
-var playerOffsetY = 730;
-var isJumping = false;
-var jumpHeight = 200; 
-var jumpSpeed = 5; 
-var platforms = [];
+const tileSizeX = 128;
+const tileSizeY = 128;
+const groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.TextureCache['imgs/tile.png']);
+const platforms = [];
+let playerTankSprite;
+let isJumping = false;
+const jumpHeight = 200;
+const jumpSpeed = 5;
+const playerOffsetX = 25;
+const playerOffsetY = 730;
+const minX = 5;
+const maxX = 945;
+const minY = 730;
+const maxY = 0;
 
-
-const appID = "TODO"
-var currentSession;
-var deltaPosition;
+const appID = "TODO";
+let currentSession;
 const deltaOffset = 5;
-var deltaRotation = 0;
 const namespace1 = "urn:x-cast:testChannel";
 
 const app = new PIXI.Application({ width: resolutionX, height: resolutionY, backgroundColor: 0x1099bb });
-
 document.getElementById("pixie-container").appendChild(app.view);
-const texturePromise = PIXI.Assets.load("imgs/tile.png");
 
-texturePromise.then((texturePromise) => {
-
-    var groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.TextureCache['imgs/tile.png']);
+PIXI.Assets.load(["imgs/tile.png", "imgs/poyoo.png"]).then(() => {
     app.stage.addChild(groundTiles);
-
-
-    for (var i = 0; i <= parseInt(resolutionX / tileSizeX); i++) {
-        for (var j = 0; j <= parseInt(resolutionX / tileSizeX); j++) {
+    for (let i = 0; i <= parseInt(resolutionX / tileSizeX); i++) {
+        for (let j = 0; j <= parseInt(resolutionX / tileSizeX); j++) {
             groundTiles.addFrame('imgs/tile.png', i * tileSizeX, j * tileSizeY);
         }
     }
-    const tanksPromise = PIXI.Assets.load("imgs/poyoo.png");
 
-    tanksPromise.then((tanksPromiseReceived) => {
-        var tankTexture = new PIXI.Texture(
-            PIXI.utils.TextureCache['imgs/poyoo.png'],
+    createPlatform(100, 700, 200, 20, 0xFF0000); // Rouge
+    createPlatform(400, 600, 150, 20, 0x00FF00); // Vert
+    createPlatform(700, 500, 250, 20, 0x0000FF); // Bleu
 
-        );
-        playerTankSprite = new PIXI.Sprite(tankTexture);
-        playerTankSprite.x = playerOffsetX;
-        playerTankSprite.y = playerOffsetY;
-        app.stage.addChild(playerTankSprite);
+    const tankTexture = PIXI.Texture.from('imgs/poyoo.png');
+    playerTankSprite = new PIXI.Sprite(tankTexture);
+    playerTankSprite.x = playerOffsetX;
+    playerTankSprite.y = playerOffsetY;
+    app.stage.addChild(playerTankSprite);
+});
 
-        createPlatform(100, 700, 200, 20, 0xFF0000); // Rouge
-        createPlatform(400, 600, 150, 20, 0x00FF00); // Vert
-        createPlatform(700, 500, 250, 20, 0x0000FF); // Bleu
-    })
 
-    function createPlatform(x, y, width, height, color) {
-        var platform = new PIXI.Graphics();
-        platform.beginFill(color);
-        platform.drawRect(x, y, width, height);
-        platform.endFill();
-        app.stage.addChild(platform);
-        platforms.push(platform)
+document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
+        event.preventDefault();
     }
-    
-    document.addEventListener("keydown", (event) => {
-
-        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === " ") {
-            event.preventDefault();
-        }
-    
-        switch (event.key) {
-            case "ArrowLeft":
-                moveLeft();
-                break;
-            case "ArrowRight":
-                moveRight();
-                break;
-            case "ArrowUp": 
-                jump();
-
-                break;
-        }
-    });
-    
-
-    function jump() {
-        if (!isJumping) {
-            isJumping = true;
-            jumpAnimation();
-        }
+    switch (event.key) {
+        case "ArrowLeft":
+            moveLeft();
+            break;
+        case "ArrowRight":
+            moveRight();
+            break;
+        case "ArrowUp":
+            jump();
+            break;
     }
-    
+});
 
-    function jumpAnimation() {
-        var jumpInterval;
-        var initialY = playerTankSprite.y;
-        var maxHeight = initialY - jumpHeight;
-    
-        jumpInterval = setInterval(function() {
-    
-            if (playerTankSprite.y <= maxHeight) {
-                clearInterval(jumpInterval);
-                fallAnimation();
-                return;
+function createPlatform(x, y, width, height, color) {
+    const platform = new PIXI.Graphics();
+    platform.beginFill(color);
+    platform.drawRect(0, 0, width, height); 
+    platform.endFill();
+    platform.position.set(x, y); 
+    app.stage.addChild(platform);
+    platforms.push(platform);
+    console.log("Plateforme créée : x = " + x + ", y = " + y + ", largeur = " + width + ", hauteur = " + height);
+}
+
+function jump() {
+    if (!isJumping) {
+        isJumping = true;
+        console.log(jumpHeight);
+        jumpAnimation();
+    }
+}
+
+function jumpAnimation() {
+    const jumpInterval = setInterval(() => {
+        if (playerTankSprite.y <= playerOffsetY - jumpHeight) {
+            clearInterval(jumpInterval);
+            fallAnimation();
+        } else {
+            if (isOnPlatform()) { 
+                playerTankSprite.y -= jumpSpeed + 200; 
+                playerTankSprite.y -= jumpSpeed; 
             }
-    
-            playerTankSprite.y -= jumpSpeed;
-    
-            if (moveLeftKeyPressed) {
-                moveLeft();
-            } else if (moveRightKeyPressed) {
-                moveRight();
-            }
-        }, 20);
+        }
+    }, 20);
+}
+
+function isOnPlatform() {
+    for (let i = 0; i < platforms.length; i++) {
+        let platform = platforms[i];
+        if (
+            playerTankSprite.x + playerTankSprite.width >= platform.x &&
+            playerTankSprite.x <= platform.x + platform.width &&
+            playerTankSprite.y + playerTankSprite.height >= platform.y &&
+            playerTankSprite.y <= platform.y + platform.height + deltaOffset
+        ) {
+            return true;
+        }
     }
-    function fallAnimation() {
-        var iterations = jumpHeight / jumpSpeed;
-    
-    
-        var fallInterval = setInterval(function() {
-          
+    return false;
+}
+
+function fallAnimation() {
+    const fallInterval = setInterval(() => {
+        let collisionIndex = checkPlatformCollision();
+        if (collisionIndex !== -1) {
+            clearInterval(fallInterval);
+            playerTankSprite.y = platforms[collisionIndex].y - playerTankSprite.height;
+            isJumping = false;
+        } else if (playerTankSprite.y < playerOffsetY) {
             playerTankSprite.y += jumpSpeed;
-            iterations--;
-    
-            
-            if (iterations <= 0 && playerTankSprite.y >= playerOffsetY) {
-                clearInterval(fallInterval);
-                playerTankSprite.y = playerOffsetY;
-                isJumping = false; 
-            }
-        }, 20);
-    }
-    
-    
-    function moveLeft() {
-        
-        if (playerTankSprite.x - deltaOffset >= minX) {
-            playerTankSprite.x -= deltaOffset + 5;
-            sendCommand(); 
+        } else {
+            clearInterval(fallInterval);
+            isJumping = false;
         }
-    }
-    
-    
-    function moveRight() {
-        
-        if (playerTankSprite.x + deltaOffset <= maxX) {
-            playerTankSprite.x += deltaOffset + 5;
-            sendCommand(); 
-        }
-    }
-   
+    }, 20);
+}
 
-})
+function checkPlatformCollision() {
+    for (let i = 0; i < platforms.length; i++) {
+        let platform = platforms[i];
+        if (
+            playerTankSprite.x + playerTankSprite.width >= platform.x &&
+            playerTankSprite.x <= platform.x + platform.width &&
+            playerTankSprite.y + playerTankSprite.height >= platform.y &&
+            playerTankSprite.y <= platform.y + platform.height + deltaOffset
+        ) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function moveLeft() {
+    if (playerTankSprite.x - deltaOffset >= minX) {
+        playerTankSprite.x -= deltaOffset + 5;
+    }
+}
+
+function moveRight() {
+    if (playerTankSprite.x + deltaOffset + playerTankSprite.width <= maxX) {
+        playerTankSprite.x += deltaOffset + 5;
+    }
+}
+
+
+
 
 
 
