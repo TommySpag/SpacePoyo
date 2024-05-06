@@ -14,6 +14,7 @@ const minX = 5;
 const maxX = 945;
 const minY = 730;
 const maxY = 0;
+let score = 0;
 
 const appID = "TODO";
 let currentSession;
@@ -69,6 +70,7 @@ function createPlatform(x, y, width, height, color) {
     app.stage.addChild(platform);
     platforms.push(platform);
     console.log("Plateforme créée : x = " + x + ", y = " + y + ", largeur = " + width + ", hauteur = " + height);
+    
 }
 
 function jump() {
@@ -78,6 +80,8 @@ function jump() {
         jumpAnimation();
     }
 }
+
+
 
 function jumpAnimation() {
     const jumpInterval = setInterval(() => {
@@ -89,12 +93,17 @@ function jumpAnimation() {
                 playerTankSprite.y -= jumpSpeed + 200; // Sauter plus haut si le personnage est sur une plateforme
             } else {
                 playerTankSprite.y -= jumpSpeed; // Sauter à la hauteur normale
+                
             }
         }
     }, 20);
 }
 
+
+
+
 function isOnPlatform() {
+    let onPlatform = false;
     for (let i = 0; i < platforms.length; i++) {
         let platform = platforms[i];
         if (
@@ -103,10 +112,23 @@ function isOnPlatform() {
             playerTankSprite.y + playerTankSprite.height >= platform.y &&
             playerTankSprite.y <= platform.y + platform.height + deltaOffset
         ) {
-            return true;
+            onPlatform = true;
+            console.log("Player is on platform.");
+            break; // Sortir de la boucle une fois qu'une plateforme est trouvée
         }
     }
-    return false;
+    return onPlatform;
+}
+function incrementScore() {
+    score++;
+    updateScoreDisplay();
+}
+
+function updateScoreDisplay() {
+    const scoreElement = document.getElementById("score"); // Utilise l'ID "score"
+    if (scoreElement) {
+        scoreElement.textContent = "Score: " + score;
+    }
 }
 
 function fallAnimation() {
@@ -115,6 +137,7 @@ function fallAnimation() {
         if (collisionIndex !== -1) {
             clearInterval(fallInterval);
             playerTankSprite.y = platforms[collisionIndex].y - playerTankSprite.height;
+            incrementScore(); // Incrémente le score lorsque le joueur se pose sur une plateforme
             isJumping = false;
         } else if (playerTankSprite.y < playerOffsetY) {
             playerTankSprite.y += jumpSpeed;
