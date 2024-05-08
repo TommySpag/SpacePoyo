@@ -14,26 +14,26 @@
     <div class="header container grid text-center">
         <div class="row">
             <h1 class="title">
-                ChromeCast
+                SpacePoyo Controller
             </h1>
         </div>
         <div class="row connectRow">
-            <button class="btn btn-success connect col" id="connectBtn">
+            <button class="btn btnConnect btn-success connect col" id="connectBtn">
                 Connect
             </button>
         </div>
     </div>
-    <div class="container grid text-center rest">
-        <div class="row textRow">
+    <div class="container grid rest">
+        <div class="row textRow  text-center">
             <h5 class="col textCol">Left</h5>
             <h5 class="col textCol" id="pressText">Jump</h5>
             <h5 class="col textCol">Right</h5>
         </div>
         <div class="row btnRow">
-            <button class="btn btn-primary back col btnCol" id="backBtn"><i class="bi bi-arrow-return-left"></i></button>
-            <button class="btn btn-warning press col btnCol" id="pressBtn"><i class="bi bi-chevron-double-up"
+            <button class="btn btn-danger back col btnCol btnMove" id="backBtn"><i class="bi bi-arrow-return-left"></i></button>
+            <button class="btn btn-warning press col btnCol btnJump" id="pressBtn"><i class="bi bi-chevron-double-up"
                     id="pressIcon"></i></button>
-            <button class="btn btn-primary next col btnCol" id="nextBtn"><i
+            <button class="btn btn-danger next col btnCol btnMove" id="nextBtn"><i
                     class="bi bi-arrow-return-right"></i></button>
         </div>
     </div>
