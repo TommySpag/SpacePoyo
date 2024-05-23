@@ -74,7 +74,7 @@ function createPlatform(x, y, width, height, color) {
 }
 
 function createSingleRandomPlatform(y) {
-    const platformColors = [0xFF0000, 0x00FF00, 0x0000FF]; 
+    const platformColors = [0x9370db, 0x000080,0xFF3366]; 
     const platformWidth = 200;
     const platformHeight = 10;
     let x = Math.random() * (maxX - minX) + minX; 
