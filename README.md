@@ -40,13 +40,13 @@ Comme la manette est faite sur le web, le mouvement du personnage n'est pas auss
 ## Test de 5 secondes
 Après avoir laissé un testeur voir le jeu et la manette pendant 5 secondes, nous lui avons posé quelques questions.
 
-- Avez-vous compris ce que vous devez faire pour jouer?
+### Avez-vous compris ce que vous devez faire pour jouer?
 Le testeur, ayant beaucoup d'expérience avec les jeux vidéos, a rapidement répondu qu'il fallait sauter sur la plateforme avec les boutons directionnels.
 
-- Est-ce que vous avez envie de l'essayer?
+### Est-ce que vous avez envie de l'essayer?
 Il a répondu que savoir comment le jeu allait fonctionner était quelque chose qui lui faisait vouloir l'essayer, et que visuellement, ça donnait envie de le tester.
 
-- Quelle partie vous intrigue le plus?
+### Quelle partie vous intrigue le plus?
 Il nous a dit que le deuxième saut, de la première plateforme à la deuxième, était quelque chose qu'il était curieux de découvrir comment il fonctionnerait.
 
 ## Tests d'usabilité
