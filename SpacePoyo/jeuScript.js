@@ -19,14 +19,13 @@ document.getElementById("jumpBtn").addEventListener("click", () => {
     sendCommand("jump");
 });
 document.getElementById("leftBtn").addEventListener("click", () => {
-    sendCommand("jump");
+    sendCommand("left");
 });
 document.getElementById("rightBtn").addEventListener("click", () => {
-    sendCommand("jump");
+    sendCommand("right");
 });
 
 function initializeApiOnly() {
-
     const sessionRequest = new chrome.cast.SessionRequest(appID);
     const apiConfig = new chrome.cast.ApiConfig(sessionRequest, sessionListener, receiverListener);
     chrome.cast.initialize(apiConfig, onInitSuccess, onError);
