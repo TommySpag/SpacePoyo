@@ -6,7 +6,7 @@ const groundTiles = new PIXI.tilemap.CompositeRectTileLayer(0, PIXI.utils.Textur
 const platforms = [];
 let playerTankSprite;
 let isJumping = false;
-let jumpHeight = 225;
+let jumpHeight = 235;
 const jumpSpeed = 5;
 const playerOffsetX = 25;
 let playerOffsetY = 730;
@@ -15,6 +15,7 @@ const maxX = 945;
 const minY = 730;
 const maxY = 0;
 let score = 0;
+let lives = 3;
 
 const appID = "TODO";
 let currentSession;
@@ -77,8 +78,6 @@ function createSingleRandomPlatform(y) {
     const platformWidth = 200;
     const platformHeight = 10;
     let x = Math.random() * (maxX - minX) + minX; 
-    
-  
     const color = platformColors[Math.floor(Math.random() * platformColors.length)]; 
     createPlatform(x, y, platformWidth, platformHeight, color);
 }
@@ -101,37 +100,31 @@ function jump() {
     }
 }
 
-
-
 function jumpAnimation() {
     const jumpInterval = setInterval(() => {
         let targetHeight = playerOffsetY - jumpHeight; 
         const collisionIndex = checkPlatformCollision(); 
         
-        
         if (collisionIndex !== -1) {
-        
             const platform = platforms[collisionIndex];
-            targetHeight = platform.y - jumpHeight ; 
-            console.log("Plateforme détectée. Hauteur de saut ajustée à la hauteur de la plateforme.");
-            console.log("Hauteur de la plateforme:", platform.y);
-            
+            targetHeight = platform.y - jumpHeight; 
             playerOffsetY = platform.y;
-             
-            app.stage.removeChild(platforms.shift());
+
+            if (collisionIndex === 1 && platforms.length > 0) { // Si le joueur est sur la deuxième plateforme
+                app.stage.removeChild(platforms[0]);
+                platforms.splice(0, 1); // Retire la première plateforme du tableau
+            }
         }
-        
-        console.log("Hauteur de saut cible:", targetHeight);
 
         if (playerTankSprite.y <= targetHeight) {
             clearInterval(jumpInterval);
             fallAnimation();
         } else {
             playerTankSprite.y -= jumpSpeed;
+            
         }
     }, 20);
 }
-
 
 
 function isOnPlatform() {
@@ -162,25 +155,46 @@ function updateScoreDisplay() {
         scoreElement.textContent = "Score: " + score;
     }
 }
+
+function updateLivesDisplay() {
+    const livesElement = document.getElementById("lives"); 
+    if (livesElement) {
+        livesElement.textContent = "Vies: " + lives;
+    }
+}
+
+updateLivesDisplay();
+
 function fallAnimation() {
     const fallInterval = setInterval(() => {
         let collisionIndex = checkPlatformCollision();
         
         if (collisionIndex !== -1) {
-            
             clearInterval(fallInterval);
             const platform = platforms[collisionIndex];
             playerTankSprite.y = platform.y - playerTankSprite.height;
             incrementScore(); 
             isJumping = false;
-            createSingleRandomPlatform(platform.y-100);
-            ;
+            
+            // Créer une nouvelle plateforme au-dessus de la plateforme actuelle
+            let newY = platform.y - 100;
+            if (score % 7 === 0) {
+                newY = 700;
+            }
+            createSingleRandomPlatform(newY);
         } else {
             playerTankSprite.y += jumpSpeed;
             if (playerTankSprite.y >= minY) {
                 clearInterval(fallInterval);
                 playerTankSprite.y = minY;
                 isJumping = false;
+                // Si le personnage touche le sol, décrémenter le nombre de vies
+                lives--;
+                updateLivesDisplay();
+                if (lives <= 0) {
+                    // Si le personnage n'a plus de vies, le faire disparaître
+                    app.stage.removeChild(playerTankSprite);
+                }
             }
         }
     }, 20);
@@ -202,31 +216,33 @@ function checkPlatformCollision() {
 }
 
 function moveLeft() {
+    const moveSpeed = 15; // Augmentation de la vitesse de déplacement
     if (isOnPlatform()) {
         let collisionIndex = checkPlatformCollision();
         let platform = platforms[collisionIndex];
         
         if (playerTankSprite.x - deltaOffset >= platform.x) {
-            playerTankSprite.x -= deltaOffset;
+            playerTankSprite.x -= deltaOffset + moveSpeed; // Augmentation de la vitesse
         }
     } else {
         if (playerTankSprite.x - deltaOffset >= minX) {
-            playerTankSprite.x -= deltaOffset;
+            playerTankSprite.x -= deltaOffset + moveSpeed; // Augmentation de la vitesse
         }
     }
 }
 
 function moveRight() {
+    const moveSpeed = 15; // Augmentation de la vitesse de déplacement
     if (isOnPlatform()) {
         let collisionIndex = checkPlatformCollision();
         let platform = platforms[collisionIndex];
         if (playerTankSprite.x + playerTankSprite.width + deltaOffset <= platform.x + platform.width) {
-            playerTankSprite.x += deltaOffset;
+            playerTankSprite.x += deltaOffset + moveSpeed; // Augmentation de la vitesse
         }
     } else {
         
         if (playerTankSprite.x + deltaOffset + playerTankSprite.width <= maxX) {
-            playerTankSprite.x += deltaOffset;
+            playerTankSprite.x += deltaOffset + moveSpeed; // Augmentation de la vitesse
         }
     }
 }
