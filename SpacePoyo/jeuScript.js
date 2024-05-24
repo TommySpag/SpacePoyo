@@ -1,17 +1,17 @@
 const appID = "C69A6C46";
 let currentSession;
-const namespace1 = "urn:x-cast:SpacePoyo";
+const namespace = "urn:x-cast:SpacePoyo";
 
 document.getElementById("connectBtn").addEventListener("click", () => {
     if (currentSession) {
         currentSession.leave(onCorrectLeave, onWrongLeave);
         document.getElementById("connectBtn").textContent = "Connect";
-        document.getElementById("connectBtn").className = "btn btn-success connect col";
+        document.getElementById("connectBtn").className = "btn btnConnect btn-success connect col";
     }
     else {
         initializeApiOnly();
         document.getElementById("connectBtn").textContent = "Disconnect";
-        document.getElementById("connectBtn").className = "btn btn-danger connect col";
+        document.getElementById("connectBtn").className = "btn btnMove btn-danger connect col";
     }
 });
 
@@ -42,7 +42,7 @@ function onWrongLeave() {
 function sendCommand(movement) {
     let message = { movement: movement}
     message = JSON.stringify(message);
-    currentSession.sendMessage(namespace1, message);
+    currentSession.sendMessage(namespace, message);
 }
 
 function onInitSuccess() {
@@ -62,7 +62,7 @@ function receiverListener(availability) {
 }
 
 function load() {
-    const mediaInfo = new chrome.cast.media.MediaInfo('https://transfertco.ca/SpacePoyo_Jeu/SpacePoyo/jeu.html', 'video/mp4');
+    const mediaInfo = new chrome.cast.media.MediaInfo('https://transfertco.ca/SpacePoyo_Jeu/SpacePoyo/jeu.html', 'application/x-www-form-urlencoded');
     const request = new chrome.cast.media.LoadRequest(mediaInfo);
     currentSession.loadMedia(request);
 }
