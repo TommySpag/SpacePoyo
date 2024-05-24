@@ -49,5 +49,7 @@ Il a répondu que savoir comment le jeu allait fonctionner était quelque chose 
 ### Quelle partie vous intrigue le plus?
 Il nous a dit que le deuxième saut, de la première plateforme à la deuxième, était quelque chose qu'il était curieux de découvrir comment il fonctionnerait.
 
-## Tests d'usabilité
-(En préparation)
+## Conclusion
+Nous avons vraiment apprécié cette première expérience à réaliser un jeu, même s'il était de petite magnitude.
+Il est certain qu'avec un peu plus d'effort, une remise sans pénalité aurait été possible, et nous apprendrons de cela.
+Nous sommes tous de même contents du résultat et souhaitons peut-être un jour améliorer ce concept et l'amener plus loin.
