@@ -1,5 +1,5 @@
 # SpacePoyo
-Github repository of our [Pixi.js](https://pixijs.com/) game Space Poyo
+Github repository de notre jeu [Pixi.js](https://pixijs.com/), Space Poyo!
 
 ## Description
 Space Poyo est un jeu platformeur, où Poyo s'envole dans l'espace!
